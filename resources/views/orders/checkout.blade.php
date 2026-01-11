@@ -180,7 +180,7 @@
                     <div class="space-y-4 mb-6 max-h-60 overflow-y-auto">
                         @foreach($cartItems as $item)
                         <div class="flex items-center space-x-3 pb-4 border-b border-gray-200">
-                            <img src="https://via.placeholder.com/80x80/059669/FFFFFF?text=Item" alt="{{ $item->name }}" class="w-16 h-16 object-cover rounded-lg">
+                            <img src="{{ asset('storage/' . ($item->image ?? 'default.jpg')) }}" alt="{{ $item->name }}" class="w-16 h-16 object-cover rounded-lg">
                             <div class="flex-1">
                                 <h4 class="font-bold text-gray-800 text-sm line-clamp-1">{{ $item->name }}</h4>
                                 <p class="text-xs text-gray-600">Qty: {{ $item->quantity }}</p>

@@ -28,7 +28,7 @@
                 </h3>
 
                 <!-- Search -->
-                <form method="GET" class="space-y-6">
+                <form method="GET" action="{{ route('shop') }}" class="space-y-6">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Cari Produk</label>
                         <div class="relative">
@@ -70,15 +70,15 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Kondisi</label>
                         <div class="space-y-2">
                             <label class="flex items-center cursor-pointer group">
-                                <input type="checkbox" name="condition[]" value="like_new" class="w-4 h-4 text-green-600 rounded">
+                                <input type="checkbox" name="condition[]" value="like_new" {{ request()->has('condition') && in_array('like_new', (array) request('condition', [])) ? 'checked' : '' }} class="w-4 h-4 text-green-600 rounded">
                                 <span class="ml-2 text-gray-700 group-hover:text-green-600 transition">Seperti Baru</span>
                             </label>
                             <label class="flex items-center cursor-pointer group">
-                                <input type="checkbox" name="condition[]" value="good" class="w-4 h-4 text-green-600 rounded">
+                                <input type="checkbox" name="condition[]" value="good" {{ request()->has('condition') && in_array('good', (array) request('condition', [])) ? 'checked' : '' }} class="w-4 h-4 text-green-600 rounded">
                                 <span class="ml-2 text-gray-700 group-hover:text-green-600 transition">Bagus</span>
                             </label>
                             <label class="flex items-center cursor-pointer group">
-                                <input type="checkbox" name="condition[]" value="fair" class="w-4 h-4 text-green-600 rounded">
+                                <input type="checkbox" name="condition[]" value="fair" {{ request()->has('condition') && in_array('fair', (array) request('condition', [])) ? 'checked' : '' }} class="w-4 h-4 text-green-600 rounded">
                                 <span class="ml-2 text-gray-700 group-hover:text-green-600 transition">Cukup Baik</span>
                             </label>
                         </div>
@@ -89,7 +89,7 @@
                         <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-3 rounded-xl transition transform hover:scale-105 shadow-lg">
                             <i class="fas fa-search mr-2"></i> Terapkan Filter
                         </button>
-                        <a href="/shop" class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-xl text-center transition">
+                        <a href="{{ route('shop') }}" class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-xl text-center transition">
                             <i class="fas fa-redo mr-2"></i> Reset Filter
                         </a>
                     </div>
@@ -103,50 +103,82 @@
             <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div class="flex items-center space-x-4">
-                        <span class="text-gray-700 font-semibold">Menampilkan <span class="text-green-600">6</span> dari <span class="text-green-600">24</span> produk</span>
+                        <span class="text-gray-700 font-semibold">Menampilkan <span class="text-green-600">{{ $products->count() }}</span> dari <span class="text-green-600">{{ $total }}</span> produk</span>
                     </div>
                     <div class="flex items-center space-x-4">
                         <label class="text-gray-700 font-semibold">Urutkan:</label>
-                        <select name="sort" onchange="this.form.submit()" class="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
-                            <option value="newest">Terbaru</option>
-                            <option value="price_low">Harga Terendah</option>
-                            <option value="price_high">Harga Tertinggi</option>
-                            <option value="popular">Terpopuler</option>
-                        </select>
+                        <form method="GET" action="{{ route('shop') }}" class="inline-block">
+                            <!-- Preserve existing query parameters -->
+                            @foreach(request()->query() as $key => $value)
+                                @if($key !== 'sort' && $key !== 'page')
+                                    @if(is_array($value))
+                                        @foreach($value as $v)
+                                            <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
+                                        @endforeach
+                                    @else
+                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                    @endif
+                                @endif
+                            @endforeach
+                            <select name="sort" onchange="this.form.submit()" class="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
+                                <option value="">Terbaru</option>
+                                <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga Terendah</option>
+                                <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga Tertinggi</option>
+                                <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Terpopuler</option>
+                            </select>
+                        </form>
                     </div>
                 </div>
             </div>
 
             <!-- Products -->
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                @for ($i = 1; $i <= 6; $i++)
+                @forelse($products as $product)
                     <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover-lift cursor-pointer">
                     <div class="relative overflow-hidden">
-                        <img src="https://via.placeholder.com/400x400/059669/FFFFFF?text=Product+{{ $i }}" alt="Product {{ $i }}" class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500">
+                        <img src="{{ asset('storage/' . $product->image_01) }}" alt="{{ $product->name }}" class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500">
                         <!-- Badges -->
                         <div class="absolute top-4 left-4 space-y-2">
-                            @if($i % 2 == 0)
+                            @if($product->discount ?? false)
                             <span class="block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                                 <i class="fas fa-fire mr-1"></i> Hot Deal
                             </span>
                             @endif
                             <span class="block bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                Kondisi Bagus
+                                @switch($product->condition)
+                                    @case('like_new')
+                                        Seperti Baru
+                                    @break
+                                    @case('good')
+                                        Kondisi Bagus
+                                    @break
+                                    @case('fair')
+                                        Cukup Baik
+                                    @break
+                                    @default
+                                        Bagus
+                                @endswitch
                             </span>
                         </div>
                         <div class="absolute top-4 right-4 space-y-2">
-                            <button class="bg-white hover:bg-red-500 hover:text-white text-gray-700 p-3 rounded-full shadow-lg transition transform hover:scale-110">
+                            <form action="{{ route('wishlist.add', $product->id) }}" method="POST" data-wishlist-{{ $product->id }} style="display: none;">
+                                @csrf
+                            </form>
+                            <button class="bg-white hover:bg-red-500 hover:text-white text-gray-700 p-3 rounded-full shadow-lg transition transform hover:scale-110" onclick="event.preventDefault(); document.querySelector('form[data-wishlist-{{ $product->id }}]')?.submit();">
                                 <i class="fas fa-heart"></i>
                             </button>
-                            <button class="bg-white hover:bg-blue-500 hover:text-white text-gray-700 p-3 rounded-full shadow-lg transition transform hover:scale-110">
+                            <a href="{{ route('product.show', $product->id) }}" class="bg-white hover:bg-blue-500 hover:text-white text-gray-700 p-3 rounded-full shadow-lg transition transform hover:scale-110 block text-center">
                                 <i class="fas fa-eye"></i>
-                            </button>
+                            </a>
                         </div>
                         <!-- Quick Add -->
                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform">
-                            <button class="w-full bg-white hover:bg-green-600 text-green-600 hover:text-white font-bold py-3 rounded-lg transition">
-                                <i class="fas fa-cart-plus mr-2"></i> Tambah ke Keranjang
-                            </button>
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full bg-white hover:bg-green-600 text-green-600 hover:text-white font-bold py-3 rounded-lg transition">
+                                    <i class="fas fa-cart-plus mr-2"></i> Tambah ke Keranjang
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <div class="p-6">
@@ -154,38 +186,44 @@
                             <span class="text-xs font-semibold text-gray-500">Kategori Produk</span>
                             <div class="flex items-center text-yellow-400">
                                 <i class="fas fa-star text-sm"></i>
-                                <span class="text-xs font-semibold text-gray-600 ml-1">4.{{ $i }}</span>
+                                <span class="text-xs font-semibold text-gray-600 ml-1">{{ $product->rating }}</span>
                             </div>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-green-600 transition line-clamp-2">Nama Produk Berkualitas Premium {{ $i }}</h3>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Deskripsi singkat produk yang menarik dan menjelaskan kondisi barang dengan detail</p>
+                        <a href="{{ route('product.show', $product->id) }}" class="text-lg font-bold text-gray-800 mb-2 group-hover:text-green-600 transition line-clamp-2 hover:underline">
+                            {{ $product->name }}
+                        </a>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $product->details }}</p>
                         <div class="flex items-center justify-between border-t pt-4">
                             <div>
-                                <div class="text-sm text-gray-400 line-through">Rp {{ number_format(200000 * $i, 0, ',', '.') }}</div>
-                                <div class="text-2xl font-black text-green-600">Rp {{ number_format(100000 * $i, 0, ',', '.') }}</div>
+                                @if($product->original_price ?? false)
+                                <div class="text-sm text-gray-400 line-through">{{ $product->getPriceFormatted() }}</div>
+                                @endif
+                                <div class="text-2xl font-black text-green-600">{{ $product->getPriceFormatted() }}</div>
                             </div>
-                            <button class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white p-3 rounded-xl transition transform hover:scale-110 shadow-lg">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white p-3 rounded-xl transition transform hover:scale-110 shadow-lg">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
             </div>
-            @endfor
+                @empty
+                <div class="col-span-full py-12 text-center">
+                    <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-600 mb-2">Produk Tidak Ditemukan</h3>
+                    <p class="text-gray-500 mb-6">Coba ubah filter atau kata kunci pencarian Anda</p>
+                    <a href="{{ route('shop') }}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition">
+                        Lihat Semua Produk
+                    </a>
+                </div>
+                @endforelse
         </div>
 
         <!-- Pagination -->
-        <div class="mt-12 flex justify-center">
-            <nav class="flex items-center space-x-2">
-                <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-green-50 hover:border-green-500 hover:text-green-600 transition">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-lg shadow-lg">1</button>
-                <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-green-50 hover:border-green-500 hover:text-green-600 transition">2</button>
-                <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-green-50 hover:border-green-500 hover:text-green-600 transition">3</button>
-                <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-green-50 hover:border-green-500 hover:text-green-600 transition">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </nav>
+        <div class="mt-12">
+            {{ $products->links('pagination::tailwind') }}
         </div>
     </div>
 </div>

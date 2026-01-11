@@ -12,13 +12,36 @@ class ProductController extends Controller
         $query = Product::query();
 
         // Search
-        if ($request->has('search')) {
+        if ($request->has('search') && $request->search) {
             $query->where('name', 'like', '%' . $request->search . '%')
                 ->orWhere('details', 'like', '%' . $request->search . '%');
         }
 
+        // Price Filter
+        if ($request->has('price') && $request->price && $request->price !== 'all') {
+            switch ($request->price) {
+                case '0-500000':
+                    $query->whereBetween('price', [0, 500000]);
+                    break;
+                case '500000-1000000':
+                    $query->whereBetween('price', [500000, 1000000]);
+                    break;
+                case '1000000-5000000':
+                    $query->whereBetween('price', [1000000, 5000000]);
+                    break;
+                case '5000000':
+                    $query->where('price', '>=', 5000000);
+                    break;
+            }
+        }
+
+        // Condition Filter
+        if ($request->has('condition') && is_array($request->condition) && count($request->condition) > 0) {
+            $query->whereIn('condition', $request->condition);
+        }
+
         // Sort
-        if ($request->has('sort')) {
+        if ($request->has('sort') && $request->sort) {
             switch ($request->sort) {
                 case 'price_low':
                     $query->orderBy('price', 'asc');
@@ -29,6 +52,9 @@ class ProductController extends Controller
                 case 'newest':
                     $query->orderBy('created_at', 'desc');
                     break;
+                case 'popular':
+                    $query->orderBy('rating', 'desc');
+                    break;
                 default:
                     $query->latest();
             }
@@ -37,8 +63,9 @@ class ProductController extends Controller
         }
 
         $products = $query->paginate(12);
+        $total = Product::count();
 
-        return view('shop.index', compact('products'));
+        return view('shop.index', compact('products', 'total'));
     }
 
     public function show($id)

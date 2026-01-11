@@ -45,11 +45,11 @@
         <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
     </div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div class="flex justify-center">
             <!-- Text Content -->
-            <div class="space-y-8 animate-fade-in">
-                <div class="inline-block">
+            <div class="space-y-8 animate-fade-in max-w-3xl text-center">
+                <div class="inline-block mx-auto">
                     <span class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold">
                         <i class="fas fa-star text-yellow-300 mr-1"></i> Platform #1 Barang Bekas
                     </span>
@@ -60,7 +60,7 @@
                 <p class="text-xl md:text-2xl text-green-100 leading-relaxed">
                     Belanja barang bekas layak pakai dengan harga terjangkau. Hemat uang, selamatkan bumi!
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                <div class="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
                     <a href="/shop" class="group bg-white text-green-600 hover:bg-green-50 px-8 py-4 rounded-xl text-lg font-bold transition transform hover:scale-105 shadow-2xl flex items-center justify-center">
                         <i class="fas fa-shopping-bag mr-3 group-hover:rotate-12 transition-transform"></i>
                         Mulai Belanja
@@ -71,32 +71,18 @@
                     </a>
                 </div>
                 <!-- Stats -->
-                <div class="grid grid-cols-3 gap-6 pt-8">
+                <div class="grid grid-cols-3 gap-6 pt-4 pb-16">
                     <div class="text-center">
-                        <div class="text-3xl font-black text-yellow-300">500+</div>
-                        <div class="text-sm text-green-100 mt-1">Produk</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-black text-yellow-300">1K+</div>
-                        <div class="text-sm text-green-100 mt-1">Pelanggan</div>
+                        <div class="text-2xl font-black text-yellow-300">500+</div>
+                        <div class="text-xs text-green-100 mt-1">Produk</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-3xl font-black text-yellow-300">5K+</div>
-                        <div class="text-sm text-green-100 mt-1">Transaksi</div>
+                        <div class="text-2xl font-black text-yellow-300">1K+</div>
+                        <div class="text-xs text-green-100 mt-1">Pelanggan</div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Hero Image -->
-            <div class="relative float-animation hidden md:block">
-                <div class="relative z-10">
-                    <img src="https://via.placeholder.com/600x600/10b981/FFFFFF?text=ReUse+Market" alt="Hero" class="rounded-3xl shadow-2xl">
-                    <!-- Floating Icons -->
-                    <div class="absolute -top-6 -left-6 bg-white text-green-600 p-4 rounded-2xl shadow-2xl pulse-slow">
-                        <i class="fas fa-recycle text-3xl"></i>
-                    </div>
-                    <div class="absolute -bottom-6 -right-6 bg-yellow-400 text-white p-4 rounded-2xl shadow-2xl pulse-slow">
-                        <i class="fas fa-heart text-3xl"></i>
+                    <div class="text-center">
+                        <div class="text-2xl font-black text-yellow-300">5K+</div>
+                        <div class="text-xs text-green-100 mt-1">Transaksi</div>
                     </div>
                 </div>
             </div>
@@ -168,6 +154,77 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @if(isset($products))
+            @foreach($products->take(4) as $product)
+            <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover-lift cursor-pointer">
+                <div class="relative overflow-hidden">
+                    <img src="{{ asset('storage/' . $product->image_01) }}" alt="{{ $product->name }}" class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <!-- Badges -->
+                    <div class="absolute top-4 left-4">
+                        @if($loop->index % 2 == 0)
+                        <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                            -30%
+                        </span>
+                        @endif
+                    </div>
+                    <div class="absolute top-4 right-4 space-y-2">
+                        <button class="bg-white hover:bg-red-500 hover:text-white text-gray-700 p-3 rounded-full shadow-lg transition transform hover:scale-110">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <a href="{{ route('product.show', $product->id) }}" class="bg-white hover:bg-green-500 hover:text-white text-gray-700 p-3 rounded-full shadow-lg transition transform hover:scale-110 block text-center">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </div>
+                    <!-- Quick Add -->
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform">
+                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full bg-white hover:bg-green-600 text-green-600 hover:text-white font-bold py-3 rounded-lg transition">
+                                <i class="fas fa-cart-plus mr-2"></i> Tambah ke Keranjang
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-green-100 text-green-600 text-xs font-semibold px-2 py-1 rounded">
+                            @switch($product->condition)
+                            @case('like_new')
+                            Seperti Baru
+                            @break
+                            @case('good')
+                            Kondisi Bagus
+                            @break
+                            @case('fair')
+                            Cukup Baik
+                            @break
+                            @endswitch
+                        </span>
+                        <div class="ml-auto flex items-center text-yellow-400">
+                            <i class="fas fa-star text-sm"></i>
+                            <span class="text-xs font-semibold text-gray-600 ml-1">{{ $product->rating }}</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('product.show', $product->id) }}" class="text-lg font-bold text-gray-800 mb-2 group-hover:text-green-600 transition line-clamp-2 hover:underline">
+                        {{ $product->name }}
+                    </a>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $product->details }}</p>
+                    <div class="flex items-center justify-between border-t pt-4">
+                        <div>
+                            <div class="text-sm text-gray-400 line-through">Rp {{ number_format($product->price * 1.5, 0, ',', '.') }}</div>
+                            <div class="text-2xl font-black text-green-600">{{ $product->getPriceFormatted() }}</div>
+                        </div>
+                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white p-3 rounded-xl transition transform hover:scale-110 shadow-lg">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            @else
             @for ($i = 1; $i <= 4; $i++)
                 <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover-lift cursor-pointer">
                 <div class="relative overflow-hidden">
@@ -215,6 +272,7 @@
                 </div>
         </div>
         @endfor
+        @endif
     </div>
 
     <div class="text-center mt-12">

@@ -21,30 +21,33 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     @if(isset($wishlistItems) && $wishlistItems->count() > 0)
     <div class="mb-8">
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-heart text-pink-600 mr-2"></i>
-                    {{ $wishlistItems->count() }} Item Favorit
-                </h2>
-                <button onclick="moveAllToCart()" class="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold px-6 py-3 rounded-xl transition">
-                    <i class="fas fa-shopping-cart mr-2"></i> Pindahkan Semua ke Keranjang
-                </button>
-            </div>
-        </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-heart text-pink-600 mr-2"></i>
+                            {{ $wishlistItems->count() }} Item Favorit
+                        </h2>
+                        <form id="moveAllForm" action="{{ route('wishlist.moveAll') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <button onclick="openConfirmModal('Pindahkan ke Keranjang', 'Pindahkan semua <strong>{{ $wishlistItems->count() }}</strong> item dari wishlist ke keranjang?', function() { document.getElementById('moveAllForm').submit(); })" class="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold px-6 py-3 rounded-xl transition">
+                            <i class="fas fa-shopping-cart mr-2"></i> Pindahkan Semua ke Keranjang
+                        </button>
+                    </div>
+                </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         @foreach($wishlistItems as $item)
         <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover-lift">
             <div class="relative">
-                <img src="https://via.placeholder.com/400x400/ec4899/FFFFFF?text={{ urlencode($item->name) }}" alt="{{ $item->name }}" class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500">
+                <img src="{{ asset('storage/' . ($item->image ?? 'default.jpg')) }}" alt="{{ $item->name }}" class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500">
 
                 <!-- Remove Button -->
-                <form method="POST" action="{{ route('wishlist.remove', $item->id) }}" class="absolute top-4 right-4">
+                <form method="POST" action="{{ route('wishlist.remove', $item->pid) }}" id="wishlistForm{{ $item->pid }}" class="absolute top-4 right-4">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="bg-white hover:bg-red-500 hover:text-white text-gray-700 p-3 rounded-full shadow-lg transition transform hover:scale-110" onclick="return confirm('Hapus dari wishlist?')">
+                    <button type="button" class="bg-white hover:bg-red-500 hover:text-white text-gray-700 p-3 rounded-full shadow-lg transition transform hover:scale-110" onclick="openConfirmModal('Hapus dari Wishlist', 'Hapus <strong>{{ $item->name }}</strong> dari wishlist?', function() { document.getElementById('wishlistForm{{ $item->pid }}').submit(); })">
                         <i class="fas fa-times"></i>
                     </button>
                 </form>
@@ -66,7 +69,7 @@
 
             <div class="p-6">
                 <span class="inline-block bg-green-100 text-green-600 text-xs font-semibold px-2 py-1 rounded mb-2">
-                    Kondisi Bagus
+                    Kondisi {{ ucfirst(str_replace('_', ' ', $item->condition)) }}
                 </span>
                 <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-pink-600 transition">
                     {{ $item->name }}
@@ -74,18 +77,19 @@
 
                 <div class="flex items-center mb-4">
                     <div class="flex text-yellow-400 text-sm">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
+                        @for($i = 0; $i < floor($item->rating); $i++)
+                            <i class="fas fa-star"></i>
+                        @endfor
+                        @if($item->rating - floor($item->rating) >= 0.5)
+                            <i class="fas fa-star-half-alt"></i>
+                        @endif
                     </div>
-                    <span class="text-xs text-gray-500 ml-2">(4.5)</span>
+                    <span class="text-xs text-gray-500 ml-2">({{ $item->rating }})</span>
                 </div>
 
                 <div class="flex items-center justify-between border-t pt-4">
                     <div>
-                        <div class="text-sm text-gray-400 line-through">Rp {{ number_format($item->price * 2, 0, ',', '.') }}</div>
+                        <div class="text-sm text-gray-400 line-through">Rp {{ number_format($item->price * 1.5, 0, ',', '.') }}</div>
                         <div class="text-2xl font-black text-pink-600">Rp {{ number_format($item->price, 0, ',', '.') }}</div>
                     </div>
                     <form method="POST" action="{{ route('cart.add', $item->pid) }}">
@@ -143,12 +147,5 @@
     </div>
 </div>
 
-<script>
-    function moveAllToCart() {
-        if (confirm('Pindahkan semua item ke keranjang?')) {
-            // Implementation untuk move all
-            alert('Fitur ini akan segera tersedia!');
-        }
-    }
-</script>
+<!-- moveAll handled via hidden form and confirm modal -->
 @endsection

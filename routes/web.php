@@ -7,7 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AdminProductController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
     Route::post('/wishlist/add/{product}', [WishlistController::class, 'add'])->name('wishlist.add');
     Route::delete('/wishlist/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+    Route::post('/wishlist/move-all', [WishlistController::class, 'moveAll'])->name('wishlist.moveAll');
 
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
@@ -55,4 +56,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', function () {
         return view('profile');
     })->name('profile');
+
+    // Admin Products
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('products', AdminProductController::class);
+    });
 });

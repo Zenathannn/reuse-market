@@ -29,10 +29,10 @@
                         <i class="fas fa-shopping-cart text-green-600 mr-2"></i>
                         Item di Keranjang ({{ $cartItems->count() }})
                     </h2>
-                    <form method="POST" action="{{ route('cart.clear') }}" onsubmit="return confirm('Yakin ingin mengosongkan keranjang?')">
+                    <form method="POST" action="{{ route('cart.clear') }}" id="clearCartForm">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:text-red-700 font-semibold transition">
+                        <button type="button" class="text-red-600 hover:text-red-700 font-semibold transition" onclick="openConfirmModal('Kosongkan Keranjang', 'Yakin ingin mengosongkan semua item dari keranjang?', function() { document.getElementById('clearCartForm').submit(); })">
                             <i class="fas fa-trash mr-1"></i> Kosongkan
                         </button>
                     </form>
@@ -44,7 +44,7 @@
                 <div class="flex flex-col md:flex-row">
                     <!-- Image -->
                     <div class="md:w-48 flex-shrink-0">
-                        <img src="https://via.placeholder.com/300x300/059669/FFFFFF?text={{ urlencode($item->name) }}" alt="{{ $item->name }}" class="w-full h-48 md:h-full object-cover">
+                        <img src="{{ asset('storage/' . ($item->image ?? 'default.jpg')) }}" alt="{{ $item->name }}" class="w-full h-48 md:h-full object-cover">
                     </div>
 
                     <!-- Content -->
@@ -56,10 +56,10 @@
                                     Kondisi Bagus
                                 </span>
                             </div>
-                            <form method="POST" action="{{ route('cart.remove', $item->id) }}" onsubmit="return confirm('Hapus item ini?')">
+                            <form method="POST" action="{{ route('cart.remove', $item->id) }}" id="deleteForm{{ $item->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-gray-400 hover:text-red-600 transition p-2">
+                                <button type="button" class="text-gray-400 hover:text-red-600 transition p-2" onclick="openConfirmModal('Hapus Item', 'Hapus <strong>{{ $item->name }}</strong> dari keranjang?', function() { document.getElementById('deleteForm{{ $item->id }}').submit(); })">
                                     <i class="fas fa-times text-xl"></i>
                                 </button>
                             </form>
@@ -75,15 +75,21 @@
                             </div>
 
                             <!-- Quantity -->
-                            <div class="flex items-center space-x-3">
-                                <form method="POST" action="{{ route('cart.update', $item->id) }}" class="flex items-center">
+                            <div class="flex items-center space-x-1">
+                                <form method="POST" action="{{ route('cart.update', $item->id) }}" class="inline">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" name="quantity" value="{{ max(1, $item->quantity - 1) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 w-10 h-10 rounded-lg font-bold transition">
+                                    <input type="hidden" name="quantity" value="{{ max(1, $item->quantity - 1) }}">
+                                    <button type="submit" {{ $item->quantity <= 1 ? 'disabled' : '' }} class="bg-gray-200 hover:bg-gray-300 text-gray-700 w-10 h-10 rounded-lg font-bold transition {{ $item->quantity <= 1 ? 'opacity-50 cursor-not-allowed hover:bg-gray-200' : '' }}">
                                         <i class="fas fa-minus"></i>
                                     </button>
-                                    <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="w-16 text-center border-2 border-gray-300 rounded-lg py-2 font-bold" readonly>
-                                    <button type="submit" name="quantity" value="{{ $item->quantity + 1 }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 w-10 h-10 rounded-lg font-bold transition">
+                                </form>
+                                <input type="text" value="{{ $item->quantity }}" class="w-16 text-center border-2 border-gray-300 rounded-lg py-2 font-bold" readonly>
+                                <form method="POST" action="{{ route('cart.update', $item->id) }}" class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="hidden" name="quantity" value="{{ $item->quantity + 1 }}">
+                                    <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-700 w-10 h-10 rounded-lg font-bold transition">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </form>

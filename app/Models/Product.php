@@ -13,6 +13,9 @@ class Product extends Model
         'image_01',
         'image_02',
         'image_03',
+        'views',
+        'condition',
+        'rating',
     ];
 
     public function cartItems()

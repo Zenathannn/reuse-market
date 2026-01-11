@@ -77,6 +77,10 @@
 </head>
 
 <body class="bg-gradient-to-br from-gray-50 to-green-50">
+    @php
+        $cartCount = collect(session()->get('cart', []))->sum('quantity');
+        $wishlistCount = count(session()->get('wishlist', []));
+    @endphp
     <!-- Top Bar -->
     <div class="bg-gradient-to-r from-green-700 to-green-600 text-white py-2">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -137,19 +141,19 @@
                     @auth
                     <a href="/wishlist" class="relative text-gray-700 hover:text-green-600 p-2 hover:bg-green-50 rounded-lg transition group">
                         <i class="fas fa-heart text-2xl group-hover:scale-110 transition-transform"></i>
-                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">2</span>
+                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">{{ $wishlistCount }}</span>
                     </a>
                     <a href="/cart" class="relative text-gray-700 hover:text-green-600 p-2 hover:bg-green-50 rounded-lg transition group">
                         <i class="fas fa-shopping-cart text-2xl group-hover:scale-110 transition-transform"></i>
-                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">3</span>
+                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">{{ $cartCount }}</span>
                     </a>
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition shadow-lg hover:shadow-xl">
+                    <div class="relative">
+                        <button id="profileBtn" onclick="toggleProfileDropdown()" class="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition shadow-lg hover:shadow-xl">
                             <i class="fas fa-user-circle text-xl"></i>
                             <span class="text-sm font-semibold">{{ Auth::user()->name }}</span>
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
-                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 hidden group-hover:block animate-slide-down border border-gray-100">
+                        <div id="profileDropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 hidden animate-slide-down border border-gray-100">
                             <div class="px-4 py-3 border-b border-gray-100">
                                 <p class="text-sm font-semibold text-gray-800">{{ Auth::user()->name }}</p>
                                 <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
@@ -218,12 +222,12 @@
                     <a href="/cart" class="flex items-center text-gray-700 hover:bg-green-50 hover:text-green-600 px-3 py-3 rounded-lg text-base font-medium transition">
                         <i class="fas fa-shopping-cart w-6"></i>
                         <span class="ml-3">Keranjang</span>
-                        <span class="ml-auto bg-green-500 text-white text-xs px-2 py-1 rounded-full">3</span>
+                        <span class="ml-auto bg-green-500 text-white text-xs px-2 py-1 rounded-full">{{ $cartCount }}</span>
                     </a>
                     <a href="/wishlist" class="flex items-center text-gray-700 hover:bg-green-50 hover:text-green-600 px-3 py-3 rounded-lg text-base font-medium transition">
                         <i class="fas fa-heart w-6"></i>
                         <span class="ml-3">Wishlist</span>
-                        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">2</span>
+                        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ $wishlistCount }}</span>
                     </a>
                     <a href="/profile" class="flex items-center text-gray-700 hover:bg-green-50 hover:text-green-600 px-3 py-3 rounded-lg text-base font-medium transition">
                         <i class="fas fa-user w-6"></i>
@@ -423,7 +427,26 @@
                 setTimeout(() => alert.remove(), 500);
             });
         }, 5000);
+
+        // Profile dropdown toggle
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close profile dropdown on outside click
+        document.addEventListener('click', function(event) {
+            const profileBtn = document.getElementById('profileBtn');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            if (profileBtn && dropdown && !profileBtn.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
     </script>
+
+    <!-- Modal Component -->
+    @include('components.modal')
 </body>
 
 </html>
