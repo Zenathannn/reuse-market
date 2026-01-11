@@ -78,8 +78,8 @@
 
 <body class="bg-gradient-to-br from-gray-50 to-green-50">
     @php
-        $cartCount = collect(session()->get('cart', []))->sum('quantity');
-        $wishlistCount = count(session()->get('wishlist', []));
+    $cartCount = collect(session()->get('cart', []))->sum('quantity');
+    $wishlistCount = count(session()->get('wishlist', []));
     @endphp
     <!-- Top Bar -->
     <div class="bg-gradient-to-r from-green-700 to-green-600 text-white py-2">
@@ -438,7 +438,7 @@
         document.addEventListener('click', function(event) {
             const profileBtn = document.getElementById('profileBtn');
             const dropdown = document.getElementById('profileDropdown');
-            
+
             if (profileBtn && dropdown && !profileBtn.contains(event.target) && !dropdown.contains(event.target)) {
                 dropdown.classList.add('hidden');
             }

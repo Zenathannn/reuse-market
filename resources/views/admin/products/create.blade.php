@@ -31,7 +31,7 @@
                     class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition @error('name') border-red-500 @enderror"
                     placeholder="Contoh: Laptop Bekas Dell Core i5">
                 @error('name')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -44,7 +44,7 @@
                     class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition @error('price') border-red-500 @enderror"
                     placeholder="3500000">
                 @error('price')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -58,7 +58,7 @@
                     placeholder="Jelaskan kondisi, fitur, dan detail produk...">{{ old('details') }}</textarea>
                 <p class="text-xs text-gray-500 mt-1">Maksimal 1000 karakter</p>
                 @error('details')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -82,7 +82,7 @@
                     </label>
                 </div>
                 @error('condition')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -109,7 +109,7 @@
                     </div>
                     <div id="preview_01" class="mt-3"></div>
                     @error('image_01')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -130,7 +130,7 @@
                     </div>
                     <div id="preview_02" class="mt-3"></div>
                     @error('image_02')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -151,7 +151,7 @@
                     </div>
                     <div id="preview_03" class="mt-3"></div>
                     @error('image_03')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -170,20 +170,20 @@
 </div>
 
 <script>
-function updateImagePreview(input, previewId) {
-    const preview = document.getElementById(previewId);
-    preview.innerHTML = '';
-    
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = 'w-full h-40 object-cover rounded-xl';
-            preview.appendChild(img);
-        };
-        reader.readAsDataURL(input.files[0]);
+    function updateImagePreview(input, previewId) {
+        const preview = document.getElementById(previewId);
+        preview.innerHTML = '';
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'w-full h-40 object-cover rounded-xl';
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
-}
 </script>
 @endsection

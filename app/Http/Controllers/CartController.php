@@ -67,7 +67,7 @@ class CartController extends Controller
     public function remove($id)
     {
         $cart = session()->get('cart', []);
-        
+
         if (isset($cart[$id])) {
             unset($cart[$id]);
             session()->put('cart', $cart);
@@ -83,4 +83,3 @@ class CartController extends Controller
         return back()->with('success', 'Keranjang berhasil dikosongkan!');
     }
 }
-

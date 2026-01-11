@@ -74,15 +74,15 @@
                         <td class="px-6 py-4">
                             <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
                                 @switch($product->condition)
-                                    @case('like_new')
-                                        Seperti Baru
-                                    @break
-                                    @case('good')
-                                        Bagus
-                                    @break
-                                    @case('fair')
-                                        Cukup Baik
-                                    @break
+                                @case('like_new')
+                                Seperti Baru
+                                @break
+                                @case('good')
+                                Bagus
+                                @break
+                                @case('fair')
+                                Cukup Baik
+                                @break
                                 @endswitch
                             </span>
                         </td>

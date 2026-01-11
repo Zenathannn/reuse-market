@@ -49,7 +49,7 @@ class WishlistController extends Controller
     {
         $productId = (int)$id;
         $wishlist = session()->get('wishlist', []);
-        
+
         if (($key = array_search($productId, $wishlist)) !== false) {
             unset($wishlist[$key]);
             session()->put('wishlist', array_values($wishlist));

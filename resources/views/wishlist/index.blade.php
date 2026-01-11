@@ -21,20 +21,20 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     @if(isset($wishlistItems) && $wishlistItems->count() > 0)
     <div class="mb-8">
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            <i class="fas fa-heart text-pink-600 mr-2"></i>
-                            {{ $wishlistItems->count() }} Item Favorit
-                        </h2>
-                        <form id="moveAllForm" action="{{ route('wishlist.moveAll') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                        <button onclick="openConfirmModal('Pindahkan ke Keranjang', 'Pindahkan semua <strong>{{ $wishlistItems->count() }}</strong> item dari wishlist ke keranjang?', function() { document.getElementById('moveAllForm').submit(); })" class="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold px-6 py-3 rounded-xl transition">
-                            <i class="fas fa-shopping-cart mr-2"></i> Pindahkan Semua ke Keranjang
-                        </button>
-                    </div>
-                </div>
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    <i class="fas fa-heart text-pink-600 mr-2"></i>
+                    {{ $wishlistItems->count() }} Item Favorit
+                </h2>
+                <form id="moveAllForm" action="{{ route('wishlist.moveAll') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+                <button onclick="openConfirmModal('Pindahkan ke Keranjang', 'Pindahkan semua <strong>{{ $wishlistItems->count() }}</strong> item dari wishlist ke keranjang?', function() { document.getElementById('moveAllForm').submit(); })" class="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold px-6 py-3 rounded-xl transition">
+                    <i class="fas fa-shopping-cart mr-2"></i> Pindahkan Semua ke Keranjang
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -79,10 +79,10 @@
                     <div class="flex text-yellow-400 text-sm">
                         @for($i = 0; $i < floor($item->rating); $i++)
                             <i class="fas fa-star"></i>
-                        @endfor
-                        @if($item->rating - floor($item->rating) >= 0.5)
+                            @endfor
+                            @if($item->rating - floor($item->rating) >= 0.5)
                             <i class="fas fa-star-half-alt"></i>
-                        @endif
+                            @endif
                     </div>
                     <span class="text-xs text-gray-500 ml-2">({{ $item->rating }})</span>
                 </div>

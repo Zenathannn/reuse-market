@@ -110,15 +110,15 @@
                         <form method="GET" action="{{ route('shop') }}" class="inline-block">
                             <!-- Preserve existing query parameters -->
                             @foreach(request()->query() as $key => $value)
-                                @if($key !== 'sort' && $key !== 'page')
-                                    @if(is_array($value))
-                                        @foreach($value as $v)
-                                            <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
-                                        @endforeach
-                                    @else
-                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                    @endif
-                                @endif
+                            @if($key !== 'sort' && $key !== 'page')
+                            @if(is_array($value))
+                            @foreach($value as $v)
+                            <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
+                            @endforeach
+                            @else
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endif
+                            @endif
                             @endforeach
                             <select name="sort" onchange="this.form.submit()" class="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
                                 <option value="">Terbaru</option>
@@ -134,7 +134,7 @@
             <!-- Products -->
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 @forelse($products as $product)
-                    <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover-lift cursor-pointer">
+                <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover-lift cursor-pointer">
                     <div class="relative overflow-hidden">
                         <img src="{{ asset('storage/' . $product->image_01) }}" alt="{{ $product->name }}" class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500">
                         <!-- Badges -->
@@ -146,17 +146,17 @@
                             @endif
                             <span class="block bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                                 @switch($product->condition)
-                                    @case('like_new')
-                                        Seperti Baru
-                                    @break
-                                    @case('good')
-                                        Kondisi Bagus
-                                    @break
-                                    @case('fair')
-                                        Cukup Baik
-                                    @break
-                                    @default
-                                        Bagus
+                                @case('like_new')
+                                Seperti Baru
+                                @break
+                                @case('good')
+                                Kondisi Bagus
+                                @break
+                                @case('fair')
+                                Cukup Baik
+                                @break
+                                @default
+                                Bagus
                                 @endswitch
                             </span>
                         </div>
@@ -208,7 +208,7 @@
                             </form>
                         </div>
                     </div>
-            </div>
+                </div>
                 @empty
                 <div class="col-span-full py-12 text-center">
                     <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
@@ -219,14 +219,14 @@
                     </a>
                 </div>
                 @endforelse
-        </div>
+            </div>
 
-        <!-- Pagination -->
-        <div class="mt-12">
-            {{ $products->links('pagination::tailwind') }}
+            <!-- Pagination -->
+            <div class="mt-12">
+                {{ $products->links('pagination::tailwind') }}
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 <!-- Benefits Banner -->

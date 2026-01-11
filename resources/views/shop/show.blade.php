@@ -52,10 +52,10 @@
                     <div class="flex items-center text-yellow-400">
                         @for($i = 0; $i < floor($product->rating); $i++)
                             <i class="fas fa-star"></i>
-                        @endfor
-                        @if($product->rating - floor($product->rating) >= 0.5)
+                            @endfor
+                            @if($product->rating - floor($product->rating) >= 0.5)
                             <i class="fas fa-star-half-alt"></i>
-                        @endif
+                            @endif
                     </div>
                     <span class="text-gray-600">({{ $product->rating }} dari 5)</span>
                 </div>
@@ -78,17 +78,17 @@
                 <h3 class="font-bold text-gray-800 mb-3">Kondisi Produk</h3>
                 <span class="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold">
                     @switch($product->condition)
-                        @case('like_new')
-                            <i class="fas fa-star"></i> Seperti Baru
-                        @break
-                        @case('good')
-                            <i class="fas fa-check"></i> Kondisi Bagus
-                        @break
-                        @case('fair')
-                            <i class="fas fa-exclamation-circle"></i> Cukup Baik
-                        @break
-                        @default
-                            Bagus
+                    @case('like_new')
+                    <i class="fas fa-star"></i> Seperti Baru
+                    @break
+                    @case('good')
+                    <i class="fas fa-check"></i> Kondisi Bagus
+                    @break
+                    @case('fair')
+                    <i class="fas fa-exclamation-circle"></i> Cukup Baik
+                    @break
+                    @default
+                    Bagus
                     @endswitch
                 </span>
             </div>

@@ -123,7 +123,7 @@ class OrderController extends Controller
                 $quantity = $item['quantity'] ?? 1;
                 $itemTotal = $product->price * $quantity;
                 $total += $itemTotal;
-                
+
                 $cartItems->push((object)[
                     'id' => $product->id,
                     'name' => $product->name,
